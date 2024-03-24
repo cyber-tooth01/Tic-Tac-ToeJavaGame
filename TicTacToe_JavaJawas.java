@@ -1,4 +1,7 @@
 //Hugo Cordova, Samuel Ralph, Maximiliano Davila this program is made to play tic-tac-toe against local players
+//Sam asssited in Scoreboard, printBoard, wrote both playGame and playGameAI, in addition to generally making sure all code went together
+//Hugo wrote Scoreboard, Replay Functionality, and PlayerNames
+//Max wrote win conditions, formats of gameboard, assited in general coding
 
 /*
 
@@ -13,23 +16,17 @@ Concept
 This program provide a fun game that is 
 created to be enjoyed that is Tic-Tac-Toe,
 where you vs a player or a AI can play
-and win but also lose or draw.
-
-Menu 
-
-1. Vs a local player
-2. Vs a AI machine
-0. Quit
-
-Please choose an option:
+and win but also lose or draw
 
  */
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 public class TicTacToe_JavaJawas {
 
+    //Requirements that help run the program 
     public static final char EMPTY = ' ';
     public static final char X = 'X';
     public static final char O = 'O';
@@ -93,8 +90,8 @@ public class TicTacToe_JavaJawas {
 
             //Menu of selections of gamemodes 
             println("\n-------- Menu -------");
-            println("1. Vs a local player");
-            println("2. Vs an AI machine");
+            println("1. Versus a local player");
+            println("2. Versus an AI machine");
             println("3. Quit");
 
             //Let the user decide the option
@@ -108,13 +105,16 @@ public class TicTacToe_JavaJawas {
                 //Option 1: Local player
                 println("\nYou chose to play against a local player");
 
+                //Clear char array
                 initializeBoard();
 
+                //Use non-AI game loop
                 playGame();
 
 
                 println(" "); 
 
+                //Print out scoreboard
                 println("Wins for 'O' player: " + scoreO);
                 println("Wins for 'X' player: " + scoreX);
                   
@@ -126,12 +126,20 @@ public class TicTacToe_JavaJawas {
 
                 //Option 2: AI player
                 print("\nYou chose to play against the computer");
-                //Player 1 name
-                println("Input Player 1 name: ");
-                String Player1 = in.nextLine();
+                
+                //Clear char array
+                initializeBoard();
+
+                //Use AI version of game loop
+                playGameAI();
 
 
-                println("SCOREBOARD");
+                println(" "); 
+
+                //Print scoreboard
+                println("Wins for 'O' player: " + scoreO);
+                println("Wins for 'X' player: " + scoreX);
+                  
 
             }
 
@@ -144,8 +152,7 @@ public class TicTacToe_JavaJawas {
 
         public static void Scoreboard (char playerMark){
             //Take in given playerMark at game end
-            
-            //Add value to array based on user's character
+            //Add value to array based on user's character (Sam)
             if (playerMark == 'X') {
                 scoreX++;
             } else {
@@ -153,46 +160,50 @@ public class TicTacToe_JavaJawas {
             }
         }
 
+        //Check for winner in rows when player completas a stack of them in a row (Maximiliano Davila)
         public static boolean checkRowsForWin () {
             //This method check for the Rows to find out if there is a winner that did a full X or O in the rows that wins the match
             for (int row = 0; row < board.length; row++) {
                 char firstSymbol = board[row][0];
-                boolean rowHasWin = true; // Assume the row has a win
+                boolean rowHasWin = true; 
         
                 for (int col = 1; col < board[row].length; col++) {
                     if (board[row][col] != firstSymbol || board[row][col] == EMPTY) {
-                        rowHasWin = false; // If any cell doesn't match or is empty, row doesn't have a win
+                        rowHasWin = false; 
                         break;
                     }
                 }
         
                 if (rowHasWin) {
-                    return true; // If all cells match, return true
+                    return true; 
                 }
             }
-            return false; // No row has a win
+            return false; 
         }
 
+        //Check for wins for columns when a player completes a stack of them in a column (Maximiliano Daliva)
         public static boolean checkColumnsForWin () {
             //This method checks for the Columns to find out if there is a winner that did a full X or O in the columns that wins the match
             for (int col = 0; col < board[0].length; col++) {
                 char firstSymbol = board[0][col];
-                boolean colHasWin = true; // Assume the column has a win
+                boolean colHasWin = true; 
         
+                //After iterating through the base value of the board, loop through char array, looking to see if the previously identified value line up in a column 
                 for (int row = 1; row < board.length; row++) {
                     if (board[row][col] != firstSymbol || board[row][col] == EMPTY) {
-                        colHasWin = false; // If any cell doesn't match or is empty, column doesn't have a win
+                        colHasWin = false; 
                         break;
                     }
                 }
         
                 if (colHasWin) {
-                    return true; // If all cells match, return true
+                    return true; 
                 }
             }
-            return false; // No column has a win
+            return false; 
         }
 
+        //Check for wins in diagonal when a player completes a stack of their symbols (Maximiliano Davila)
         public static boolean checkDiagonalsForWin () {
             // This method checks the row to find out if there is a winner that did a full X or O diagonally that wins the match
             int size = board.length;
@@ -210,7 +221,7 @@ public class TicTacToe_JavaJawas {
             // Second diagonal
             char secondaryDiagonalCell = board[0][size - 1];
             boolean secondaryDiagonalWin = true;
-            if (secondaryDiagonalCell != ' ') { // Check if the diagonal contains non-empty cells
+            if (secondaryDiagonalCell != ' ') { 
                 for (int i = 1; i < size; i++) {
                     if (board[i][size - 1 - i] != secondaryDiagonalCell) {
                         secondaryDiagonalWin = false;
@@ -218,7 +229,7 @@ public class TicTacToe_JavaJawas {
                     }
                 }
             } else {
-                secondaryDiagonalWin = false; // Set to false if the diagonal contains empty cells
+                secondaryDiagonalWin = false; 
             }
 
             // Return true if either diagonal has a win
@@ -275,7 +286,7 @@ public class TicTacToe_JavaJawas {
 
             }
 
-        //This method is used to print out the board
+        //Non-AI game loop (Sam)
         public static void playGame (){
             //Keyboard reader
             Scanner in = new Scanner(System.in);
@@ -323,7 +334,8 @@ public class TicTacToe_JavaJawas {
                   }
 
 
-                //Check for winner
+                //Check for winner (This program is made by Maximiliano Davila)
+                //gameEnded is modified here 
                 if (checkRowsForWin()){
                     gameEnded = true;
                     printBoard();
@@ -351,6 +363,7 @@ public class TicTacToe_JavaJawas {
                 } else if (checkDiagonalsForWin()){
                     gameEnded = true; 
                     printBoard();
+
                 //Confirm player identity 
                 if (currentPlayerMark == X){
                     println("Congragulations " + Player1 + "! You won!");
@@ -373,18 +386,128 @@ public class TicTacToe_JavaJawas {
                     currentPlayerMark = X; 
                 }
 
-                //Modify the 'gameEnded' var here.
+                
             } while (!gameEnded); 
         }
 
-           
+        //AI version of main game loop
+        public static void playGameAI (){
+            //Keyboard reader
+            Scanner in = new Scanner(System.in);
 
-        
+            //Prompt for player names
+            //Player 1 name
+            println("\nInput Player 1 name: ");
+            String Player1 = in.next();
 
-        //This method is for the AI opponent to go up against
-        public static void AI ( int machine){
+            //Will run once and loop forever, until user chooses to exit, or some game condition leads to a closing
+            do {
+                //Print the current state of the game
+                println(" ");
+                printBoard();
+                println(" ");
+            
+                //Request input from current player
+                while(true) {
 
-        }
+                // Get random coordinate if AI's turn
+                boolean aiTurnDone = false; 
+                int x, y;
+
+                //Allow for AI logic when not true
+                while(!aiTurnDone){
+                Random random = new Random();
+
+                if(currentPlayerMark == O) {
+                x = random.nextInt(3);
+                y = random.nextInt(3);
+                
+
+                while(!isValidMove(x,y)) {
+                    x = random.nextInt(3);
+                    y = random.nextInt(3); 
+                    }
+
+                    //Assign values to char array, print out current game state, and end AI turn
+                    board[x][y] = currentPlayerMark; 
+                    printBoard();
+                    aiTurnDone = true; 
+                }
+            
+                else {
+                    //Prompt for human input
+                    int[] desiredMove = new int[2];
+                    
+                    println("Input first your desired x axis position: ");
+                    desiredMove[0] = in.nextInt();
+                    println("Input your desired y axis position");
+                    desiredMove[1] = in.nextInt();
+                    
+                    if(isValidMove(desiredMove[0], desiredMove[1])) {
+
+                        board[desiredMove[0]][desiredMove[1]] = currentPlayerMark; 
+                        break; 
+
+                    }
+                    
+                    println("Invalid move, try again");
+                  }
+
+                }
+
+                if (checkRowsForWin()){
+                    gameEnded = true;
+                    printBoard();
+                //Confirm player identity 
+                if (currentPlayerMark == X){
+                    println("Congragulations " + Player1 + "! You won!");
+                }
+
+                Scoreboard(currentPlayerMark); 
+                break; 
+
+                } else if (checkColumnsForWin()){
+                    gameEnded = true; 
+                    printBoard();
+                //Confirm player identity 
+                if (currentPlayerMark == X){
+                    println("Congragulations " + Player1 + "! You won!");
+                }
+
+                Scoreboard(currentPlayerMark);
+                break; 
+
+                } else if (checkDiagonalsForWin()){
+                    gameEnded = true; 
+                    printBoard();
+
+                //Confirm player identity 
+                if (currentPlayerMark == X){
+                    println("Congragulations " + Player1 + "! You won!");
+                }
+                
+                Scoreboard(currentPlayerMark);
+                break;
+
+                } else if (boardFull()) {
+                    gameEnded = true; 
+                    printBoard();
+                    println("Game tied.");
+                    break;
+                }
+                
+                //Change players, X being human and O being computer
+                if (currentPlayerMark == X){
+                    currentPlayerMark = O;
+                }else{
+                    currentPlayerMark = X; 
+                }
+
+                
+            } 
+        } while (!gameEnded); 
+    }
+
         //Shortcut to use print
         public static void print (String msg){
             System.out.print(msg);
@@ -408,12 +531,7 @@ public class TicTacToe_JavaJawas {
             }
 
             return true;
-        }
-
-        
-
-        
-
+          }
         }
 
 
