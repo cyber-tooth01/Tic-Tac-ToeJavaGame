@@ -24,9 +24,16 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
+
+
 public class TicTacToe_JavaJawas {
 
     //Requirements that help run the program 
+    public static final String RED = "\u001B[31m";
+    public static final String BLUE = "\u001B[34m";
+    public static final String reset = "\u001B[0m";
+    public static int x = 0;
+    public static int y = 0; 
     public static final char EMPTY = ' ';
     public static final char X = 'X';
     public static final char O = 'O';
@@ -75,6 +82,8 @@ public class TicTacToe_JavaJawas {
 
 
         //Explain the program to the user
+        println("\nDeveloped by Samuel Ralph, Maximiliano Dávila, and Hugo Cordova");
+        println("\nAlso known as the JavaJawas"); 
         println("\nThis program provide a fun game that is");
         println("created to be enjoyed that is Tic-Tac-Toe,");
         println("where you vs a player or a AI can play");
@@ -104,6 +113,7 @@ public class TicTacToe_JavaJawas {
 
                 //Option 1: Local player
                 println("\nYou chose to play against a local player");
+                println("\nThe board in this game is on two axises, one x and one y.\nVertically, it goes from 0 to 2, and horizontally it goes 0 to 2.");
 
                 //Clear char array
                 initializeBoard();
@@ -126,6 +136,7 @@ public class TicTacToe_JavaJawas {
 
                 //Option 2: AI player
                 print("\nYou chose to play against the computer");
+                println("\nThe board in this game is on two axises, one x and one y.\nVertically, it goes from 0 to 2, and horizontally it goes 0 to 2.");
                 
                 //Clear char array
                 initializeBoard();
@@ -149,7 +160,8 @@ public class TicTacToe_JavaJawas {
             }
          }
       } 
-
+      
+    
         public static void Scoreboard (char playerMark){
             //Take in given playerMark at game end
             //Add value to array based on user's character (Sam)
@@ -276,15 +288,40 @@ public class TicTacToe_JavaJawas {
 
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
-                    System.out.print(board[i][j]);
-                    if (j < SIZE - 1) System.out.print("    |");
+                    if (board[i][j] == 'X') {
+                    System.out.print(RED + board[i][j] + reset);
+                    }   else if (board[i][j] == 'O') {
+                        System.out.print(BLUE + board[i][j] + reset);
+                    } else {
+                        System.out.print(board[i][j]);
+                    }
+                    if (j < SIZE - 1) System.out.print("     ");
                 }
                 System.out.println();
                 if (i < SIZE - 1)
-                    println("|____|_____|___|");
+                    println("____|_____|____");
+                if (i == SIZE - 1){
+                    println("    |     |    ");
+                }    
             }
 
             }
+
+            // public static void printBoard () {
+            //     //This method takes in the initialized array and prints it
+    
+            //     for (int i = 0; i < SIZE; i++) {
+            //         for (int j = 0; j < SIZE; j++) {
+            //             System.out.print(board[i][j]);
+            //             if (j < SIZE - 1) System.out.print("    |");
+            //         }
+            //         System.out.println();
+            //         if (i < SIZE - 1)
+            //             println("|____|_____|___|");
+            //     }
+    
+            //     }
+    
 
         //Non-AI game loop (Sam)
         public static void playGame (){
@@ -315,25 +352,32 @@ public class TicTacToe_JavaJawas {
                 }
 
                 //Request input from current player
-                while(true) {
-                    int[] desiredMove = new int[2];
-                    
-                    println("Input first your desired x axis position: ");
-                    desiredMove[0] = in.nextInt();
-                    println("Input your desired y axis position");
-                    desiredMove[1] = in.nextInt();
-                    
-                    if(isValidMove(desiredMove[0], desiredMove[1])) {
-
-                        board[desiredMove[0]][desiredMove[1]] = currentPlayerMark; 
-                        break; 
-
+                while (true) {
+        
+                    boolean validMove = false;
+        
+                    while (!validMove) {
+                        try {
+                            println("Input your desired y axis position: ");
+                            x = in.nextInt();
+                            println("Input your desired x axis position: ");
+                            y = in.nextInt();
+        
+                            if (isValidMove(x, y)) {
+                                validMove = true;
+                            } else {
+                                println("Invalid move, try again");
+                            }
+                        } catch (Exception e) {
+                            println("Invalid input, try again");
+                            in.nextLine(); // Clear the input buffer
+                        }
                     }
+        
+                    board[x][y] = currentPlayerMark;
+                    break;
                     
-                    println("Invalid move, try again");
-                  }
-
-
+                }
                 //Check for winner (This program is made by Maximiliano Davila)
                 //gameEnded is modified here 
                 if (checkRowsForWin()){
@@ -438,10 +482,18 @@ public class TicTacToe_JavaJawas {
                     //Prompt for human input
                     int[] desiredMove = new int[2];
                     
-                    println("Input first your desired x axis position: ");
-                    desiredMove[0] = in.nextInt();
-                    println("Input your desired y axis position");
-                    desiredMove[1] = in.nextInt();
+                    try { 
+                        println("Input first your desired x axis position: ");
+                        desiredMove[0] = in.nextInt();
+                        println("Input your desired y axis position");
+                        desiredMove[1] = in.nextInt();
+                    }catch (ArrayIndexOutOfBoundsException e) {
+                        println("Invalid move, try again");
+                        println("\nInput first your desired x axis position: ");
+                        desiredMove[0] = in.nextInt();
+                        println("Input your desired y axis position");
+                        desiredMove[1] = in.nextInt();
+                    } ;
                     
                     if(isValidMove(desiredMove[0], desiredMove[1])) {
 
@@ -520,18 +572,19 @@ public class TicTacToe_JavaJawas {
 
         
         
-        public static boolean isValidMove(int row, int col){
-            //Check if the specified cell is already occupied
+        public static boolean isValidMove(int row, int col) {
+            // Check if the specified cell is already occupied
             if (board[row][col] != ' ') {
-                return false; 
-            }else if (row  >= 3){
-                return false; 
-            }else if (col >= 3){
-                return false; 
+                return false;
             }
-
+            // Check if the row and column values are within the valid range (0 to 2)
+            else if (row < 0 || row > 2 || col < 0 || col > 2) {
+                return false;
+            }
+        
             return true;
-          }
         }
+
+    }
 
 
